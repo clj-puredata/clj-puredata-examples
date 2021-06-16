@@ -1,0 +1,17 @@
+#N canvas 0 0 450 300 12;
+#X text 25 12 deprecated! use 'list store' instead;
+#X text 25 37 select the nth item from a list.;
+#X text 25 62 inlet 0: item #.;
+#X text 25 87 inlet 1: list.;
+#X text 25 112 ignores item # below 0 or above list size.;
+#X obj 824 165 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1 -1;
+#X symbolatom 824 125 10 0 0 0 - - -;
+#X obj 824 85 cljpd.nth;
+#X floatatom 824 5 5 -3 13 0 - - -;
+#X msg 915 45 a b c d e f g h i j;
+#X obj 915 5 loadbang;
+#X connect 6 0 5 0;
+#X connect 7 0 6 0;
+#X connect 8 0 7 0;
+#X connect 9 0 7 1;
+#X connect 10 0 9 0;

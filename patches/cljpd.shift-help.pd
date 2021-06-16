@@ -1,0 +1,13 @@
+#N canvas 0 0 450 300 12;
+#X text 25 12 shift a list by n places.;
+#X text 25 37 left inlet: number of places to shift;
+#X text 25 62 right inlet: the list to use;
+#X obj 530 125 print;
+#X obj 530 85 cljpd.shift;
+#X floatatom 530 5 5 -5 10 0 - - -;
+#X msg 635 45 1 2 3 4 5;
+#X obj 635 5 loadbang;
+#X connect 4 0 3 0;
+#X connect 5 0 4 0;
+#X connect 6 0 4 1;
+#X connect 7 0 6 0;

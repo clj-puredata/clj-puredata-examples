@@ -1,0 +1,8 @@
+#N canvas 0 0 450 300 12;
+#X text 25 12 increase output with every bang.;
+#X text 25 37 start at zero.;
+#X obj 320 85 print counter output;
+#X obj 320 45 cljpd.counter;
+#X msg 320 5 bang;
+#X connect 3 0 2 0;
+#X connect 4 0 3 0;

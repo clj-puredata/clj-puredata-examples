@@ -1,0 +1,15 @@
+#N canvas 0 0 450 300 12;
+#X text 25 12 toggles output between 0 and 1.;
+#X text 25 37 left inlet toggles output on 1 \, keeps same output on 0.;
+#X text 25 62 right inlet sets internal value (1 or 0).;
+#X floatatom 530 85 5 0 0 0 - - -;
+#X obj 530 45 cljpd.toggle;
+#X msg 530 5 1;
+#X msg 642 5 0;
+#X msg 684 5 1;
+#X msg 726 5 0;
+#X connect 4 0 3 0;
+#X connect 5 0 4 0;
+#X connect 6 0 4 0;
+#X connect 7 0 4 1;
+#X connect 8 0 4 1;

@@ -238,7 +238,7 @@
                               outputs)))
 
 (defn- patchbay-help []
-  (let [patchbay-filename (filename "helpfile-patchbay")]
+  (let [patchbay-filename (filename "example-patchbay-for-helpfile")]
    (patchbay :in-lines ["sin" nil "saw" "sqr"]
              :out-lines [nil "left" nil "right"]
              :patch-file patchbay-filename)
