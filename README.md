@@ -4,15 +4,22 @@ These are examples showing the usage of the [clj-puredata](https://clj-puredata.
 
 Included are:
 
+| Name        | Use                                                                 |
+|-------------|---------------------------------------------------------------------|
+| counter     | increase outut with every bang                                      |
+| count-until | count from 0 to n                                                   |
+| nth         | (deprecated - use `list store` instead!) get the nth item of a list |
+| shift       | shift a list by n places                                            |
+| toggle      | flip output between 0 and 1                                         |
+| patchbay    | complex signal routing matrix with UI                               |
+
+Planned:
+
 | Name      | Use                                                                            |
 |-----------|--------------------------------------------------------------------------------|
-| Counter   | Simple counter                                                                 |
-| Nth       | (Deprecated - use `list store` instead!) Get the nth item of a list            |
-| Op-Tree   | `+`, `-`, `*`, `/` etc. with more than 2 inputs                                |
-| Switch    | Switch between inputs                                                          |
-| Sequencer | Sequencer with adjustable number of steps and lanes                            |
-| Patchbay  | Connect multiple in- and outputs dynamically, use `canvas` to draw connections |
-| GUI       | Example GUI                                                                    |
+| switch    | switch between inputs                                                          |
+| sequencer | sequencer with adjustable number of steps and lanes                            |
+| gui       | example GUI                                                                    |
 
 ## License
 
