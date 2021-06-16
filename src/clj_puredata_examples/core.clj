@@ -15,4 +15,5 @@
   (startup)
   (load-patches "help")
   (load-patches "counter" "counter-help")
+  (load-patches "patchbay-help")
   )

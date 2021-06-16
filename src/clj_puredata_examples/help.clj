@@ -10,7 +10,7 @@
     (paragraph "The following are the example patches of clj-puredata, a Clojure library for generating PureData patches. You can find the source code for these files at https://github.com/clj-puredata/clj-puredata-examples - feel free to adapt them to your own needs." 3)
     (chapter-mark "PATCHBAY")
     (node-description "patchbay" "complex signal routing matrix with UI")
-    (gap 8)
+    (gap 5)
     (chapter-mark "UTILITIES")
     (node-description "counter" "increase output with every bang")
     (node-description "count-until" "count from 0 to n")

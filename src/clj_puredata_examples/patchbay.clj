@@ -10,8 +10,7 @@
                      pd]
              :as cljpd]
             [clj-puredata-examples.modified-write-patch :refer :all]
-            ;;[pd-lib.common :refer :all]
-            ))
+            [clj-puredata-examples.text-helpers :refer :all]))
 
 (defonce ignorable-counter (atom 0))
 
@@ -44,19 +43,19 @@
   assumes to-x is greater than from-x.
   can handle to-y being smaller than from-y."
   ;; todo handle to-x being smaller than from-x
-  [canvas-id-fn
-   from-x from-y to-x to-y
-   & {:keys [midpoint thickness]
+  [& {:keys [canvas-id-fn from-x from-y to-x to-y midpoint thickness]
       :or {midpoint (+ from-x (java.lang.Math/floor (* (- to-x from-x) (java.lang.Math/random))))
            thickness 4}}]
-  [:msg
-   (str "; " (canvas-id-fn 0) " pos " from-x " " from-y)
-   (str "; " (canvas-id-fn 0) " vis_size " (- midpoint from-x) " " thickness)
-   (str "; " (canvas-id-fn 1) " pos " midpoint " " (min from-y to-y))
-   (str "; " (canvas-id-fn 1) " vis_size " thickness " " (+ (java.lang.Math/abs (- to-y from-y)) thickness))
-   (str "; " (canvas-id-fn 2) " pos " midpoint " " to-y)
-   (str "; " (canvas-id-fn 2) " vis_size " (- to-x midpoint) " " thickness)
-   ])
+  (let [[from-x from-y to-x to-y midpoint thickness]
+        (map int [from-x from-y to-x to-y midpoint thickness])]
+    [:msg
+     (str "; " (canvas-id-fn 0) " pos " from-x " " from-y)
+     (str "; " (canvas-id-fn 0) " vis_size " (- midpoint from-x) " " thickness)
+     (str "; " (canvas-id-fn 1) " pos " midpoint " " (min from-y to-y))
+     (str "; " (canvas-id-fn 1) " vis_size " thickness " " (+ (java.lang.Math/abs (int (- to-y from-y))) thickness))
+     (str "; " (canvas-id-fn 2) " pos " midpoint " " to-y)
+     (str "; " (canvas-id-fn 2) " vis_size " (- to-x midpoint) " " thickness)
+     ]))
 
 (defn count-some
   "like `(range (count COLL))` but there's `nil` for each `nil` in the COLL.
@@ -112,7 +111,7 @@
         in-range-nils (count-some in-lines) ; range with nils, for position offset/empty positions
         out-range-nils (count-some out-lines)
         base-message (into (vec (take (dec in-count) (repeat 0))) [1])
-        bang-size 12
+        bang-size 15
         gap-size 6
         bang-plus-gap (+ bang-size gap-size)
         out-bang-offset (int (/ bang-plus-gap 2))
@@ -142,14 +141,16 @@
                             ;;                                   (* in-n (+ gap-size bang-size)))
                             ;;               (- 99 canvas-size) (+ 32 (/ (- bang-size canvas-size) 2)
                             ;;                                     (* out-n (+ gap-size bang-size))))
-                            (cnv-square-line-msg (partial canvas-id in-i out-i)
-                                                 (+ 33 bang-size) (+ 32 (/ (- bang-size canvas-size) 2)
-                                                                     (* in-n bang-plus-gap))
-                                                 99 (+ 32 (/ (- bang-size canvas-size) 2)
-                                                       (* out-n bang-plus-gap)
-                                                       out-bang-offset)
-                                                 :midpoint (+ (* (inc in-i) 4) (+ 33 bang-size))
-                                                 :thickness 2)
+                       (cnv-square-line-msg :canvas-id-fn (partial canvas-id in-i out-i)
+                                            :from-x (+ 33 bang-size)
+                                            :from-y (+ 32 (/ (- bang-size canvas-size) 2)
+                                                       (* in-n bang-plus-gap))
+                                            :to-x 99
+                                            :to-y (+ 32 (/ (- bang-size canvas-size) 2)
+                                                     (* out-n bang-plus-gap)
+                                                     out-bang-offset)
+                                            :midpoint (+ (* (inc in-i) 4) (+ 33 bang-size))
+                                            :thickness 2)
                             [:select 1 (other (toggle-id in-i out-i))]))
         canvas-resets (for [line out-range
                             n in-range]
@@ -243,17 +244,33 @@
              :patch-file patchbay-filename)
    (write-patch-reload "patchbay-help"
                        {:width 600 :height 400
-                        :graph-on-parent true
-                        :view-width 300 :view-height 300}
-                       [patchbay-filename {:x 0 :y 0}]
+                        ;; :graph-on-parent true
+                        ;; :view-width 300 :view-height 300
+                        }
+                       (layout-lines
+                        (paragraph "the patchbay is a big signal router that connects every input to every output. each route can be toggled on/off individually and dynamically. the interface has a bang for each input on the left side, and a bang for each output on the right side. to toggle a connection, click the input bang, then the output bang."
+                                   4)
+                        (paragraph "there are several symbols defined for send and receive:"
+                                   1)
+                        (paragraph "- each 'input'-bang is receiving `patchbay-in-bang-N`, where n is the number of the inlet."
+                                   2)
+                        (paragraph "- each 'output'-bang is receiving `patchbay-out-bang-N`, where n is the number of the inlet"
+                                   2)
+                        (paragraph "- the patchbay receives on its `:receive-symbol` (default: `patchbay-rcv`) and sends on its `:send-symbol` (default: `patchbay-snd`)."
+                                   3)
+                        (paragraph "sending a `bang` to the patchbay will output the current state of all toggles. you can send the state to the patchbay receive to restore it."
+                                   2)
+                        (paragraph "NOTE: the patch requires the `cljpd.toggle.pd` abstraction."
+                                   1))
+                       [patchbay-filename]
                        [:msg "; patchbay-rcv bang"]
                        [:msg "; patchbay-rcv 1 0 1 0 1 0"]
                        [:bng {:send-symbol "patchbay-in-bang-sin" :label-text "sin"}]
                        [:bng {:send-symbol "patchbay-out-bang-left" :label-text "left"}]
                        [:print [:r "patchbay-snd"]]
-                       [:throw- "patchbay-in-sin" [:*- 0.1 [:osc- 440]]]
-                       [:throw- "patchbay-in-saw" [:*- 0.1 [:phasor- 110]]]
-                       [:throw- "patchbay-in-sqr" [:expr- "abs($v1 > 0.5 ? 1 : -1)" [:phasor- 220]]]
+                       [:throw- "patchbay-in-sin" [:*- 0.3 [:osc- 440]]]
+                       [:throw- "patchbay-in-saw" [:*- 0.3 [:phasor- 110]]]
+                       [:throw- "patchbay-in-sqr" [:*- 0.3 [:expr- "if($v1 > 0.5, 1, -1)" [:phasor- 220]]]]
                        [:dac-
                         [:catch- "patchbay-out-left"]
                         [:catch- "patchbay-out-right"]])))
